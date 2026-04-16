@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интенсив - Апрель 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. THE SETUP - LIGHT MODERN THEME */
+        * {
+            box-sizing: border-box;
+        }
+
+        p {
+            margin: 0;
+            margin-bottom: 15px;
+        }
+
+        body {
+            background-color: #F1F5F9;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Hide scrollbars for presentation mode */
+            background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Container that holds the slides */
+        #presentation-area {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            perspective: 1000px;
+        }
+
+        .slide-container {
+            align-items: center;
+            background-color: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            font-family: 'Inter', sans-serif;
+            height: 100%; /* Take full height of presentation-area */
+            width: 100%; /* Take full width of presentation-area */
+            justify-content: center;
+            overflow: hidden;
+            padding: 60px 80px;
+            position: absolute; /* Stack slides on top of each other */
+            top: 0;
+            left: 0;
+            border-top: 8px solid #2563EB;
+
+            /* Animation properties */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100px) scale(0.98);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+        }
+
+        /* Active slide state */
+        .slide-container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0) scale(1);
+            z-index: 10;
+        }
+
+        /* Previous slide state (moved to the left) */
+        .slide-container.previous {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-100px) scale(0.98);
+            z-index: 1;
+        }
+
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, #2563EB 0%, #38BDF8 100%);
+            z-index: 0;
+        }
+
+        .slide-container > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 2. CONSISTENT TYPOGRAPHY */
+        .slide-container h1,
+        .slide-container h2,
+        .slide-container h3 {
+            color: #0F172A;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .subtitle,
+        .slide-container .legend li,
+        .slide-container .chart-summary,
+        .slide-container td {
+            color: #475569;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .slide-container h1 {
+            font-size: 72px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            color: #1E293B;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .slide-container .slide-title {
+            font-size: 38px;
+            font-weight: 700;
+            margin-bottom: 45px;
+            text-align: left;
+            width: 100%;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .slide-container .slide-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 4px;
+            background-color: #2563EB;
+            border-radius: 2px;
+        }
+
+        .slide-container h3 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1E293B;
+        }
+
+        .slide-container p,
+        .slide-container li,
+        .slide-container .legend li,
+        .slide-container .chart-summary,
+        .slide-container th,
+        .slide-container td {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .slide-container .subtitle {
+            font-size: 24px;
+            color: #2563EB;
+            font-weight: 500;
+            margin: 0 auto;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .slide-container .content-area {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* 3. LAYOUT DEFINITIONS */
+        .title-layout {
+            text-align: center;
+        }
+
+        .title-layout .main-logo {
+            width: 140px;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px -5px rgba(37, 99, 235, 0.25);
+            display: inline-block;
+        }
+
+        .two-column {
+            align-items: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            width: 100%;
+        }
+
+        .two-column.tiled {
+            align-items: stretch;
+            gap: 40px;
+        }
+
+        .two-column.tiled > div {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .two-column.tiled h3 {
+            color: #2563EB;
+        }
+
+        .two-column ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .two-column li {
+            margin-bottom: 20px;
+            padding-left: 35px;
+            position: relative;
+            color: #334155;
+            font-weight: 500;
+            font-size: 20px;
+        }
+
+        .two-column li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #2563EB;
+            position: absolute;
+            left: 0;
+            top: 4px;
+            font-size: 18px;
+        }
+
+        .image-wrapper {
+            border-radius: 20px;
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-wrapper img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .tiled-content {
+            align-items: stretch;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .tile {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 45px 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .tile .icon {
+            color: #38BDF8;
+            font-size: 52px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            width: 80px;
+            background: #F0F9FF;
+            border-radius: 50%;
+            margin: 0 auto 25px auto;
+        }
+
+        .tile h3 {
+            font-size: 24px;
+        }
+
+        .image-tile {
+            flex: 1;
+            text-align: center;
+        }
+
+        .image-tile .image-wrapper {
+            height: 280px;
+            margin-bottom: 25px;
+            border-radius: 16px;
+        }
+
+        .image-tile h4 {
+            color: #0F172A;
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .image-tile p {
+            color: #2563EB;
+            font-size: 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .table-layout {
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 16px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .table-layout table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table-layout th,
+        .table-layout td {
+            border-bottom: 1px solid #E2E8F0;
+            padding: 20px 24px;
+            text-align: left;
+        }
+
+        .table-layout th {
+            background-color: #F8FAFC;
+            color: #1E293B;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-layout tr:nth-child(even) {
+            background-color: #F8FAFC;
+        }
+
+        .table-layout tr:last-child td {
+            border-bottom: none;
+        }
+
+        .doughnut-chart-container {
+            align-items: center;
+            display: flex;
+            gap: 100px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .doughnut-chart {
+            border-radius: 50%;
+            height: 380px;
+            width: 380px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);
+            border: 10px solid #FFFFFF;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .legend li {
+            align-items: center;
+            color: #334155;
+            display: flex;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .legend .color-box {
+            border-radius: 6px;
+            height: 24px;
+            margin-right: 15px;
+            width: 24px;
+        }
+
+        .chart-summary {
+            font-style: italic;
+            margin-top: 40px;
+            max-width: 90%;
+            text-align: center;
+            color: #64748B;
+        }
+
+        .timeline-layout {
+            align-items: stretch;
+            display: flex;
+            height: stretch;
+            justify-content: space-between;
+            position: relative;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .timeline-layout .timeline-line {
+            background-color: #E2E8F0;
+            height: 4px;
+            left: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-2px);
+            width: 100%;
+            z-index: 0;
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            text-align: center;
+            width: 23%;
+        }
+
+        .timeline-item::after {
+            background-color: #2563EB;
+            border-radius: 50%;
+            border: 4px solid #FFFFFF;
+            content: '';
+            height: 24px;
+            left: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 24px;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item .content-wrapper {
+            left: 0;
+            position: absolute;
+            width: 100%;
+        }
+
+        .timeline-item:nth-child(odd) .content-wrapper {
+            bottom: 50%;
+            margin-bottom: 35px;
+        }
+
+        .timeline-item:nth-child(even) .content-wrapper {
+            margin-top: 35px;
+            top: 50%;
+        }
+
+        .timeline-item h3 {
+            color: #0F172A;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .timeline-item p {
+            font-size: 15px;
+            color: #475569;
+        }
+
+        .qa-layout {
+            margin: 0 auto;
+            text-align: center;
+            width: 100%;
+            align-self: center;
+        }
+
+        .qa-layout h2 {
+            font-size: 80px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #2563EB, #38BDF8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .qa-layout p {
+            font-size: 26px;
+            color: #475569;
+        }
+
+        .qa-layout .contact-info {
+            color: #2563EB;
+            font-size: 20px;
+            margin-top: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background: #EFF6FF;
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+        }
+
+        .names-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .name-tag {
+            background: #EFF6FF;
+            color: #2563EB;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 18px;
+            text-transform: capitalize;
+        }
+
+        /* 4. NAVIGATION CONTROLS */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #FFFFFF;
+            border: 2px solid #E2E8F0;
+            color: #2563EB;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #2563EB;
+            color: #FFFFFF;
+            border-color: #2563EB;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        #prev-btn { left: 40px; }
+        #next-btn { right: 40px; }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Inter', sans-serif;
+            color: #64748B;
+            font-weight: 600;
+            background: #FFFFFF;
+            padding: 10px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #E2E8F0;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Presentation Area Wrapper -->
+<div id="presentation-area">
+
+    <!-- SLIDE 1 -->
+    <div class="slide-container active" id="slide1">
+        <div class="title-layout">
+            <img src="./logo.jpg" alt="Perspective Logo" class="main-logo">
+            <h1>Перспектив<br>Интенсив курс</h1>
+            <p class="subtitle">Келиңиздер, интенсив курсунда сиздер менен чогуу кандай күндөрдү бирге өткөрдүк, эстейли…</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2 -->
+    <div class="slide-container" id="slide2">
+        <h2 class="slide-title">Биздин Укмуштуу Команда</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="margin-bottom: 25px; color:#1E293B; font-size: 22px; font-weight: 600;">Биздин интенсив курсунун негизги оюнчулары:</p>
+                    <div class="names-grid">
+                        <div class="name-tag">Алтуха</div>
+                        <div class="name-tag">Орозгүл</div>
+                        <div class="name-tag">Элдияр</div>
+                        <div class="name-tag">Эрнист</div>
+                        <div class="name-tag">Идирис</div>
+                        <div class="name-tag">Санчо</div>
+                        <div class="name-tag">Мээрим</div>
+                        <div class="name-tag">Сырга</div>
+                        <div class="name-tag">Айсезим</div>
+                        <div class="name-tag">Гүлүмкан</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="image-wrapper">
+                        <img src="./photo_2026-04-16_12-52-17.jpg" alt="SECOM Students Front Group">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3 -->
+    <div class="slide-container" id="slide3">
+        <h2 class="slide-title">Биздин Жетишкендиктерибиз</h2>
+        <div class="content-area">
+            <div class="two-column tiled">
+                <div>
+                    <h3>Ички дүйнө жана Фокус</h3>
+                    <ul>
+                        <li>Ниетибизди түздөөгө үйрөндүк</li>
+                        <li>Максатыбызды туура аныктоого жетиштик</li>
+                        <li>Фокусту бир нерсеге коюуга көндүк</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Жаңы Адаттар</h3>
+                    <ul>
+                        <li>Пайдалуу жаңы адаттарды киргизүүгө аракет кылдык</li>
+                        <li>Китепти сүйүүгө үйрөндүк</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4 -->
+    <div class="slide-container" id="slide4">
+        <h2 class="slide-title">Эң Башкысы - Билим!</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <div class="image-wrapper">
+                        <img src="./photo_2026-04-16_12-52-00.jpg" alt="Students studying">
+                    </div>
+                </div>
+                <div>
+                    <p style="color:#1E293B; font-size: 22px; font-weight: 600;">40 сааттан ашуун убакыт ичинде биз төмөнкү багыттар боюнча тереңдетилген билим алдык:</p>
+                    <ul style="margin-top: 20px;">
+                        <li>Математика</li>
+                        <li>АСТ (Аналогия)</li>
+                        <li>Окуп түшүнүү</li>
+                        <li>Кыргыз тилинин практикалык грамматикасы</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5 -->
+    <div class="slide-container" id="slide5">
+        <h2 class="slide-title">Өз Алдынча Эмгек</h2>
+        <div class="content-area">
+            <div class="doughnut-chart-container">
+                <div class="doughnut-chart" style="background: conic-gradient(#2563EB 0% 50%, #38BDF8 50% 100%);"></div>
+                <ul class="legend">
+                    <li><div class="color-box" style="background-color: #2563EB;"></div>Окуу борборундагы сабактар (40 саат)</li>
+                    <li><div class="color-box" style="background-color: #38BDF8;"></div>Өз алдынча кошумча эмгек (20-40 саат)</li>
+                </ul>
+            </div>
+            <p class="chart-summary" style="font-size: 22px; color: #1E293B; font-weight: 500;">
+                Жана дагы… Өз алдынча 20-40 саат арасында кошумча эмгектендиңиздер!<br>
+                <span style="color: #2563EB;">ААА… Ушундай эмес бекен?... 😊</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 6 -->
+    <div class="slide-container" id="slide6">
+        <h2 class="slide-title">Окуудан Тышкары Кызыктуу Көз Ирмемдер</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-volleyball"></i></div>
+                    <h3>Спорт жана Квест</h3>
+                    <p>Теннисти "тытып", волейбол ойноп, татаал квесттерди чогуу таап, кино көрдүк.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-cake-candles"></i></div>
+                    <h3>Майрамдар</h3>
+                    <p>Чогуу туулган күндөрдү белгилеп, бири-бирибизге валентинкаларды жаздык.</p>
+                </div>
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-mug-hot"></i></div>
+                    <h3>Кофе-брейктер</h3>
+                    <p>Жазгүл айымдын даамдуу кофе-брейктерин жеп, күч топтодук.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7 -->
+    <div class="slide-container" id="slide7">
+        <h2 class="slide-title">Нетворкинг жана Коммуникация</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="margin-bottom: 25px; color:#1E293B; font-size: 24px; font-weight: 600;">Байланыш куруунун маанилүүлүгү:</p>
+                    <ul>
+                        <li>Коммуникация боюнча нетворкингдин пайдаларын Алишер агай менен талкууладык.</li>
+                        <li>Андан сырткары... <span style="color: #2563EB; font-style: italic;">"между нами девочками"</span> сыр бөлүшүп, кеңештик!</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="image-wrapper">
+                        <img src="./photo_2026-04-16_12-52-32.jpg" alt="Selfie Group">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8 -->
+    <div class="slide-container" id="slide8">
+        <h2 class="slide-title">Эмииииииии…….. 1-Сынамык Тест Жыйынтыктары!</h2>
+        <div class="content-area">
+            <div class="table-layout">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Окуучунун Аты-Жөнү</th>
+                            <th>Математика</th>
+                            <th>Аналогия</th>
+                            <th>Окуп түшүнүү</th>
+                            <th>Грамматика</th>
+                            <th>Жалпы Упай</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Атамкулова Гүлзар</strong></td>
+                            <td>38</td>
+                            <td>23</td>
+                            <td>26</td>
+                            <td>18</td>
+                            <td><strong style="color:#2563EB; font-size:20px;">178</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Абдулайова Айша</strong></td>
+                            <td>45</td>
+                            <td>22</td>
+                            <td>22</td>
+                            <td>15</td>
+                            <td><strong style="color:#2563EB; font-size:20px;">172</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Карабаева Мырзайым</strong></td>
+                            <td>43</td>
+                            <td>18</td>
+                            <td>17</td>
+                            <td>25</td>
+                            <td><strong style="color:#2563EB; font-size:20px;">171</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Исманова Канымай</strong></td>
+                            <td>46</td>
+                            <td>21</td>
+                            <td>23</td>
+                            <td>14</td>
+                            <td><strong style="color:#2563EB; font-size:20px;">170</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9 -->
+    <div class="slide-container" id="slide9">
+        <h2 class="slide-title">Алдыдагы Максаттар</h2>
+        <div class="content-area">
+            <div class="timeline-layout">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <div class="content-wrapper">
+                        <h3>Апрель</h3>
+                        <p>Интенсивдүү сабактар, квесттер жана 1-сынамык тестти ийгиликтүү тапшыруу.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="content-wrapper">
+                        <h3>3 - Май</h3>
+                        <p style="font-weight: 600; color: #2563EB;">2-сынамык тесттин жыйынтыгы даяр болот!</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="content-wrapper">
+                        <h3>Майдын аягы</h3>
+                        <p>Өз алдынча даярдыкты күчөтүү жана алсыз жактарды кайталоо.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="content-wrapper">
+                        <h3>Жыйынтыктоо</h3>
+                        <p>Негизги экзаменге 100% даяр болуу жана максаттарга жетүү.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10 -->
+    <div class="slide-container" id="slide10">
+        <div class="qa-layout">
+            <h2>Көңүл бурганыңыздарга чоң рахмат!</h2>
+            <p>Ийгиликтер алдыда, даярдыкты улантабыз!</p>
+            <div class="contact-info">
+                Перспектив
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Navigation Controls -->
+<button id="prev-btn" class="nav-btn" aria-label="Previous Slide"><i class="fa-solid fa-chevron-left"></i></button>
+<button id="next-btn" class="nav-btn" aria-label="Next Slide"><i class="fa-solid fa-chevron-right"></i></button>
+
+
+<!-- Sliding Logic -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const slides = document.querySelectorAll(".slide-container");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const counter = document.getElementById("slide-counter-text");
+        let currentSlideIndex = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                // Reset classes
+                slide.classList.remove("active", "previous");
+
+                // Assign classes based on relative position
+                if (index === currentSlideIndex) {
+                    slide.classList.add("active");
+                } else if (index < currentSlideIndex) {
+                    slide.classList.add("previous");
+                }
+            });
+
+            // Update counter text
+            if (counter) {
+                counter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
+            }
+
+            // Disable/Enable previous button
+            if (currentSlideIndex === 0) {
+                prevBtn.style.opacity = "0.3";
+                prevBtn.style.pointerEvents = "none";
+            } else {
+                prevBtn.style.opacity = "1";
+                prevBtn.style.pointerEvents = "auto";
+            }
+
+            // Disable/Enable next button
+            if (currentSlideIndex === slides.length - 1) {
+                nextBtn.style.opacity = "0.3";
+                nextBtn.style.pointerEvents = "none";
+            } else {
+                nextBtn.style.opacity = "1";
+                nextBtn.style.pointerEvents = "auto";
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                updateSlides();
+            }
+        }
+
+        // Button Listeners
+        nextBtn.addEventListener("click", nextSlide);
+        prevBtn.addEventListener("click", prevSlide);
+
+        // Keyboard Navigation (Left/Right Arrows and Spacebar)
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight" || e.key === " " || e.key === "Spacebar") {
+                e.preventDefault(); // Prevent scrolling on spacebar
+                nextSlide();
+            } else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // Initialize presentation state
+        updateSlides();
+    });
+</script>
+
+</body>
+</html>
